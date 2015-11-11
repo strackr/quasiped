@@ -1,6 +1,9 @@
 package quasiped
 
 import (
+	"log"
+	"time"
+
 	"github.com/hybridgroup/gobot"
 	"github.com/hybridgroup/gobot/platforms/gpio"
 )
@@ -31,10 +34,25 @@ type joint struct {
 }
 
 type Quasiped struct {
-	joints map[location]*joint
+	connection gobot.Connection
+	joints     map[location]*joint
 }
 
-func (q *Quasiped) Devices() []gobot.Device {
+func (q *Quasiped) Robot() *gobot.Robot {
+	work := func() {
+		gobot.Every(1*time.Second, func() {
+			log.Printf("Update loop %s", time.Now().String())
+		})
+	}
+
+	return gobot.NewRobot("quasiped",
+		[]gobot.Connection{q.connection},
+		q.devices(),
+		work,
+	)
+}
+
+func (q *Quasiped) devices() []gobot.Device {
 	var devs []gobot.Device
 	for _, j := range q.joints {
 		devs = append(devs, j.driver)
@@ -42,8 +60,9 @@ func (q *Quasiped) Devices() []gobot.Device {
 	return devs
 }
 
-func New(w gpio.ServoWriter) *Quasiped {
+func New(c gobot.Connection, w gpio.ServoWriter) *Quasiped {
 	return &Quasiped{
+		connection: c,
 		joints: map[location]*joint{
 			location{nw, horizontal}: &joint{driver: gpio.NewServoDriver(w, "nw_h", "1")},
 			location{ne, horizontal}: &joint{driver: gpio.NewServoDriver(w, "ne_h", "2")},
