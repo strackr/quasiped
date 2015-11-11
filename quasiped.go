@@ -1,10 +1,10 @@
 package main
 
 import (
+	"log"
 	"time"
 
 	"github.com/hybridgroup/gobot"
-	"github.com/hybridgroup/gobot/platforms/gpio"
 	"github.com/hybridgroup/gobot/platforms/raspi"
 )
 
@@ -12,20 +12,18 @@ func main() {
 	gbot := gobot.NewGobot()
 
 	r := raspi.NewRaspiAdaptor("raspi")
-	led := gpio.NewLedDriver(r, "led", "7")
 
 	work := func() {
 		gobot.Every(1*time.Second, func() {
-			led.Toggle()
+			log.Printf("Update loop %s", time.Now().String())
 		})
 	}
 
-	robot := gobot.NewRobot("blinkBot",
+	robot := gobot.NewRobot("quasiped",
 		[]gobot.Connection{r},
-		[]gobot.Device{led},
+		[]gobot.Device{},
 		work,
 	)
-
 	gbot.AddRobot(robot)
 
 	gbot.Start()
