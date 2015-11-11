@@ -1,4 +1,4 @@
-package quasiped
+package main
 
 import (
 	"log"
@@ -6,12 +6,15 @@ import (
 
 	"github.com/hybridgroup/gobot"
 	"github.com/hybridgroup/gobot/platforms/raspi"
+
+	"./quasiped"
 )
 
 func main() {
 	gbot := gobot.NewGobot()
 
 	r := raspi.NewRaspiAdaptor("raspi")
+	q := quasiped.New(r)
 
 	work := func() {
 		gobot.Every(1*time.Second, func() {
@@ -21,7 +24,7 @@ func main() {
 
 	robot := gobot.NewRobot("quasiped",
 		[]gobot.Connection{r},
-		[]gobot.Device{},
+		q.Devices(),
 		work,
 	)
 	gbot.AddRobot(robot)
