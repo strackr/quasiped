@@ -9,16 +9,16 @@ type position int
 
 const (
 	nw position = iota
-	ne position = iota
-	sw position = iota
-	se position = iota
+	ne
+	sw
+	se
 )
 
 type orientation int
 
 const (
 	horizontal orientation = iota
-	vertical   orientation = iota
+	vertical
 )
 
 type location struct {
